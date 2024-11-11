@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='img1.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        h2 { margin-bottom: 20px; }
+        label { display: block; margin: 10px 0 5px; text-align: left; }
+        input {
+            width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc;
+            border-radius: 5px; font-size: 14px;
+        }
+        .error {
+            color: red; font-size: 12px; display: none; text-align: left;
+        }
+        button {
+            width: 100%; padding: 10px; background-color: #ccc; color: white;
+            border: none; border-radius: 5px; cursor: not-allowed; font-size: 16px;
+        }
+        button.enabled {
+            background-color: rgba(0, 123, 255, 0.7); cursor: pointer;
+        }
+        button.enabled:hover { background-color: rgba(2, 84, 171, 0.7); }
+        p { margin-top: 15px; }
+        a { color: rgba(4, 107, 217, 0.7); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>注册</h2>
+        <form method="POST" id="registerForm" action="{{ url_for('auth_routes.register') }}">
+            <label for="username">用户名:</label>
+            <input type="text" name="username" id="username" required pattern="^[a-zA-Z0-9_]{3,20}$">
+            <div class="error" id="usernameError">用户名只能包含字母、数字和下划线，长度在3-20之间。</div>
+
+            <label for="email">邮箱:</label>
+            <input type="email" name="email" id="email" required>
+            <div class="error" id="emailError">请输入有效的邮箱地址。</div>
+
+            <label for="password">密码:</label>
+            <input type="password" name="password" id="password" required pattern="^.{6,}$">
+            <div class="error" id="passwordError">密码至少需要6个字符。</div>
+
+            <button type="submit" id="submitButton" disabled>注册</button>
+        </form>
+        <p>已有账号？<a href="{{ url_for('auth_routes.login') }}">登录</a></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const submitButton = document.getElementById('submitButton');
+
+            const usernameError = document.getElementById('usernameError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+
+            // Show or hide error messages
+            function showError(input, errorDiv) {
+                if (!input.checkValidity()) {
+                    errorDiv.style.display = 'block';
+                } else {
+                    errorDiv.style.display = 'none';
+                }
+            }
+
+            function validateForm() {
+                let isValid = true;
+
+                // Check username validity
+                showError(username, usernameError);
+
+                // Check email validity
+                showError(email, emailError);
+
+                // Check password validity
+                showError(password, passwordError);
+
+                // Enable/disable submit button based on form validity
+                isValid = username.checkValidity() && email.checkValidity() && password.checkValidity();
+                submitButton.disabled = !isValid;
+                submitButton.classList.toggle('enabled', isValid);
+            }
+
+            // Event listener for input events to validate in real-time
+            username.addEventListener('input', validateForm);
+            email.addEventListener('input', validateForm);
+            password.addEventListener('input', validateForm);
+
+            // Initial validation on page load
+            validateForm();
+        });
+    </script>
+</body>
+</html>

@@ -1,14 +1,21 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-from linkedpaper_app.import_data import import_data
-from models import db  # 假设模型在 models.py 文件中
+from flask import Flask, redirect, url_for
 from config import Config
+from models import db
+from auth_routes import auth_routes  # 引入auth_routes蓝图
+
 app = Flask(__name__)
+
 app.config.from_object(Config)
 db.init_app(app)
+@app.route('/')
+def home():
+    return redirect(url_for('auth_routes.login'))  # 重定向到auth_routes蓝图中的login路由
+# 注册蓝图
+app.register_blueprint(auth_routes, url_prefix='/auth')  # 设置蓝图的前缀为'/auth'
+
+# 初始化数据库
 with app.app_context():
     db.create_all()
-    import_data()
+
 if __name__ == '__main__':
     app.run(debug=True)

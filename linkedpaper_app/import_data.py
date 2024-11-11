@@ -33,7 +33,7 @@ def import_data():
     citations_df = pd.read_csv(r'data/edge.csv')
 
     # 调用具体的导入函数
-    # import_papers(papers_df)
+    import_papers(papers_df)
     import_node_feats(node_feat_df)
     import_citations(citations_df)
 

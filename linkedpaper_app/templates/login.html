@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='img1.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .flash-message {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            width: 20%;
+            z-index: 1000;
+        }
+        .success { background-color: rgba(0, 136, 255, 0.7); }
+        .error { background-color: #f44336; }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        h2 { margin-bottom: 20px; }
+        label { display: block; margin: 10px 0 5px; text-align: left; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button {
+            width: 100%; padding: 10px; background-color: rgba(0, 123, 255, 0.7);
+            color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;
+        }
+        button:hover { background-color: rgba(2, 84, 171, 0.7); }
+        p { margin-top: 15px; }
+        a { color: rgba(4, 107, 217, 0.7); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-messages">
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="flash-message error">{{ message }}</div>
+                    {% elif category == 'info' %}
+                        <div class="flash-message success">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <h2>登录</h2>
+        <form method="POST" action="{{ url_for('auth_routes.login') }}">
+           <label for="username">用户名:</label>
+            <input type="text" name="username" id="username" required>
+
+            <label for="password">密码:</label>
+            <input type="password" name="password" id="password" required>
+
+            <button type="submit">登录</button>
+        </form>
+        <p>还没有账号？<a href="{{ url_for('auth_routes.register') }}">注册</a></p>
+    </div>
+
+    <script>
+        setTimeout(function() {
+            const flashMessages = document.getElementById('flash-messages');
+            if (flashMessages) { flashMessages.style.display = 'none'; }
+        }, 1000);
+    </script>
+</body>
+</html>
