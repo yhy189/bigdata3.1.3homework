@@ -40,7 +40,9 @@ def login():
         # 验证用户和密码
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
-            return jsonify({"message": "Login successful"}), 200
+            #session['user_id'] = user.id  # 存储用户ID到session
+            #flash('登录成功！', 'info')
+            return redirect(url_for('paper_routes.search'))  # 跳转到论文搜索页面
 
         return jsonify({"error": "Invalid username or password"}), 401
 
