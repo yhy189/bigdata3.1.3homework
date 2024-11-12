@@ -43,6 +43,16 @@ class Paper(db.Model):
     category = db.Column(db.String(50))
     year = db.Column(db.Integer)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'abstract': self.abstract,
+            'category': self.category,
+            'year': self.year
+        }
+
+
 class NodeFeat(db.Model):
     __tablename__ = 'node_feat'
     id = db.Column(db.Integer, primary_key=True)

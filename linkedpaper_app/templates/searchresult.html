@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for('static', filename='img1.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px; /* 使头部更紧凑 */
+            text-align: center;
+            border-bottom: 1px solid #007bff; /* 减少线的强调 */
+            position: relative; /* 使按钮定位相对 */
+        }
+
+        .home-button {
+            position: absolute;
+            left: 20px; /* 位置调整 */
+            top: 15px; /* 位置调整 */
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: none;
+            background-color: #ccc; /* 按钮颜色设置为灰色 */
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #bbb; /* 悬停时深色 */
+        }
+
+        main {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 1400px; /* 增加内容区域的最大宽度 */
+            margin: 20px auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* 减小列表之间的间距 */
+        }
+
+        h2 {
+            color: #555;
+            margin: 10px 0; /* 减少标题的上下间距 */
+            font-size: 1.2em; /* 适当减少标题字体 */
+        }
+
+        .paper-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.2; /* 减少行高 */
+        }
+
+        .paper-item p {
+            margin: 5px 0; /* 适当减少段落间距 */
+        }
+
+        .paper-item .year-category {
+            display: flex;
+            gap: 15px; /* 设置分类和年份之间的间隔 */
+        }
+
+        .paper-item .year-category strong {
+            margin-right: 5px; /* 控制strong标签与文字的间距 */
+        }
+
+        h4 {
+            color: #0056b3;
+            margin: 5px 0; /* 减小标题的上下间距 */
+        }
+
+        strong {
+            color: #333; /* 使强调文本颜色一致 */
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+            border: 1px solid #007bff;
+            color: #007bff;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.9em; /* 小一点的字体 */
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination span {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .jump-to-page {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .jump-to-page input {
+            width: 50px; /* 调整输入框宽度 */
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 4px;
+            border: 1px solid #007bff;
+            font-size: 0.9em; /* 小一点的字体 */
+        }
+
+        .jump-to-page button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9em; /* 小一点的字体 */
+        }
+
+        .jump-to-page button:hover {
+            background-color: #0056b3;
+        }
+
+        .abstract {
+            max-height: 40px; /* 控制显示的最大高度，适应两行 */
+            overflow: hidden; /* 隐藏超出部分 */
+            text-overflow: ellipsis; /* 用省略号表示超出文本 */
+            display: -webkit-box; /* 使得文本显示为文本块 */
+            -webkit-box-orient: vertical; /* 将文本设置为竖直方向 */
+            -webkit-line-clamp: 2; /* 显示的行数 */
+            font-size: 0.9em; /* 减小摘要的字体大小 */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="home-button" onclick="window.location.href='{{ url_for('paper_routes.mainpage') }}'">
+            返回主页
+        </button>
+        <h2>Search Results</h2> <!-- 将标题更改为h2，减小字号 -->
+    </header>
+    <main>
+        <div>
+            <h2>Results for Query:
+                Title "{{ title }}",
+                Abstract "{{ abstract }}",
+                Category "{{ category }}",
+                Year "{{ year }}"
+            </h2>
+            <h3>Total Results: {{ total_results }}</h3>
+            <ul>
+                {% for paper in papers %}
+                <li class="paper-item">
+                    <h4>{{ paper.title }}</h4>
+                    <div class="year-category">
+                        <p><strong>Year:</strong> {{ paper.year }}</p>
+                        <p><strong>Category:</strong> {{ paper.category }}</p>
+                    </div>
+                    <p><strong>Abstract:</strong> <span class="abstract">{{ paper.abstract }}</span></p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 分页部分 -->
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('paper_routes.search_papers', page=1, title=title, abstract=abstract, category=category, year=year) }}">首页</a>
+            <a href="{{ url_for('paper_routes.search_papers', page=page - 1, title=title, abstract=abstract, category=category, year=year) }}">上一页</a>
+            {% endif %}
+
+            <!-- 当前页与总页数 -->
+            <span>第 {{ page }} 页 / 共 {{ total_pages }} 页</span>
+
+            {% if page < total_pages %}
+            <a href="{{ url_for('paper_routes.search_papers', page=page + 1, title=title, abstract=abstract, category=category, year=year) }}">下一页</a>
+            <a href="{{ url_for('paper_routes.search_papers', page=total_pages, title=title, abstract=abstract, category=category, year=year) }}">尾页</a>
+            {% endif %}
+
+            <!-- 跳转到特定页数的输入框 -->
+            <div class="jump-to-page">
+                <label for="pageInput">跳转至:</label>
+                <input type="number" id="pageInput" min="1" max="{{ total_pages }}" value="{{ page }}">
+                <button onclick="jumpToPage()">跳转</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function jumpToPage() {
+            var page = document.getElementById('pageInput').value;
+            var totalPages = {{ total_pages }};
+            if (page && page >= 1 && page <= totalPages) {
+                // 跳转到指定页数
+                window.location.href = "{{ url_for('paper_routes.search_papers', page='') }}" + page + "&title={{ title }}&abstract={{ abstract }}&category={{ category }}&year={{ year }}";
+            } else {
+                alert("请输入有效的页数!");
+            }
+        }
+    </script>
+</body>
+</html>

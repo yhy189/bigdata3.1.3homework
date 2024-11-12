@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='img1.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 3;
+        }
+        nav img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        nav .logo-text {
+            color: white;
+            font-size: 20px;
+            margin-left: 5px;
+        }
+        nav .welcome-text {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 200px;
+        }
+        .search-container {
+            margin-top: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgba(4, 133, 248, 0.82);
+            color: white;
+        }
+        input[type="text"], select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 0 5px 5px 0;
+            font-size: 16px;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: rgba(4, 133, 248, 0.82);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #067af8;
+        }
+        .recommended-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            margin-top: 30px;
+        }
+        .recommended-section h2 {
+            text-align: center;
+            font-size: 24px;
+            color: rgba(4, 133, 248, 0.82);
+        }
+        .recommended-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .recommended-section li {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .recommended-section li:hover {
+            background-color: rgba(236, 236, 236, 0.62);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+    <nav>
+        <div>
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
+            <span class="logo-text">Research Papers</span>
+        </div>
+        <span class="welcome-text">Welcome, {{ username }}!</span>
+    </nav>
+
+    <div class="container">
+        <h1>Find Your Research Papers</h1>
+        <div class="search-container">
+            <div class="search-box">
+                <label for="title">Title:</label>
+                <input type="text" id="title" placeholder="Enter title">
+            </div>
+            <div class="search-box">
+                <label for="abstract">Abstract:</label>
+                <input type="text" id="abstract" placeholder="Enter abstract">
+            </div>
+            <div class="search-box">
+                <label for="category">Category:</label>
+                <select id="category">
+                    <option value="">Select category</option>
+                    {% for category in available_categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="search-box">
+                <label for="year">Year:</label>
+                <input type="text" id="year" placeholder="Enter year (e.g., 2020)">
+            </div>
+            <button onclick="searchPapers()">Search</button>
+        </div>
+
+        <div class="recommended-section">
+            <h2>Recommended Papers</h2>
+            <ul>
+                {% for paper in recommended_papers %}
+                    <li onclick="selectPaper('{{ paper.title }}')">
+                        <span>{{ paper.title }}</span>
+                        <span> {{ paper.category }} ({{ paper.year }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function searchPapers() {
+            const title = document.getElementById('title').value;
+            const abstract = document.getElementById('abstract').value;
+            const category = document.getElementById('category').value;
+            const year = document.getElementById('year').value;
+            const params = new URLSearchParams({ title, abstract, category, year }).toString();
+            window.location.href = `/paper/search?${params}`;
+        }
+
+        function selectPaper(title) {
+            alert(`Selected paper: ${title}`);
+        }
+    </script>
+
+</body>
+</html>

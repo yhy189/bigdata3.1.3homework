@@ -12,7 +12,7 @@ def home():
     return redirect(url_for('auth_routes.login'))  # 重定向到auth_routes蓝图中的login路由
 # 注册蓝图
 app.register_blueprint(auth_routes, url_prefix='/auth')  # 设置蓝图的前缀为'/auth'
-app.register_blueprint(paper_routes, url_prefix='/paper')
+app.register_blueprint(paper_routes,url_prefix='/paper')
 # 初始化数据库
 with app.app_context():
     db.create_all()
