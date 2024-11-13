@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ paper.title }} - Paper Details</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid #ccc;
+        }
+
+        header button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        header button:hover {
+            background-color: #218838;
+        }
+
+        main {
+            margin: 40px auto;
+            padding: 30px;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #343a40;
+        }
+
+        h3 {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* 修改样式，使得整个论文卡片都可以点击 */
+        .paper-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .paper-item:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.02);
+        }
+
+        .paper-item a {
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px 0;
+        }
+
+        .paper-item a:hover {
+            text-decoration: underline;
+        }
+
+        .no-papers {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .pagination a,
+        .pagination button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .pagination a:hover,
+        .pagination button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .pagination a.disabled,
+        .pagination button.disabled {
+            background-color: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            align-self: center;
+            font-size: 16px;
+        }
+
+        .pagination input {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 60px;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        .pagination form {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button onclick="window.location.href='{{ url_for('paper_routes.search_papers') }}'">返回搜索结果</button>
+        <h2>{{ paper.title }}</h2>
+    </header>
+
+    <main>
+        <h3>摘要</h3>
+        <p>{{ paper.abstract }}</p>
+
+        <h3>详情</h3>
+        <p><strong>分类:</strong> {{ paper.category }}</p>
+        <p><strong>年份:</strong> {{ paper.year }}</p>
+
+        <h3>引用的论文</h3>
+        <ul>
+            {% for cited_paper in cited_papers %}
+                <li class="paper-item">
+                    <a href="{{ url_for('paper_routes.view_paper', paper_id=cited_paper.id) }}">
+                        <strong>{{ cited_paper.title }}</strong>
+                        <span>({{ cited_paper.year }} , {{ cited_paper.category }})</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="no-papers">暂无引用论文。</li>
+            {% endfor %}
+        </ul>
+
+        <h3>同类论文</h3>
+        <ul>
+            {% for category_paper in category_papers %}
+                <li class="paper-item">
+                    <a href="{{ url_for('paper_routes.view_paper', paper_id=category_paper.id) }}">
+                        <strong>{{ category_paper.title }}</strong>
+                        <span>({{ category_paper.year }} , {{ category_paper.category }})</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="no-papers">暂无同类论文。</li>
+            {% endfor %}
+        </ul>
+
+        <!-- 分页部分 -->
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}?page=1">首页</a>
+                <a href="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}?page={{ page - 1 }}">上一页</a>
+            {% else %}
+                <a href="#" class="disabled">首页</a>
+                <a href="#" class="disabled">上一页</a>
+            {% endif %}
+            <span>第 {{ page }} 页 / 共 {{ total_pages }} 页</span>
+            {% if page < total_pages %}
+                <a href="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}?page={{ page + 1 }}">下一页</a>
+                <a href="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}?page={{ total_pages }}">尾页</a>
+            {% else %}
+                <a href="#" class="disabled">下一页</a>
+                <a href="#" class="disabled">尾页</a>
+            {% endif %}
+
+            <!-- 跳转页码 -->
+            <form action="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}" method="GET">
+                <input type="number" name="page" min="1" max="{{ total_pages }}" value="{{ page }}" />
+                <button type="submit">跳转</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

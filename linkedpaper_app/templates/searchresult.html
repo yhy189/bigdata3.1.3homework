@@ -65,6 +65,13 @@
             background-color: #f9f9f9;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             line-height: 1.2; /* 减少行高 */
+            cursor: pointer; /* 提示用户可以点击 */
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .paper-item:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.02); /* 增加放大效果 */
         }
 
         .paper-item p {
@@ -157,6 +164,20 @@
             -webkit-line-clamp: 2; /* 显示的行数 */
             font-size: 0.9em; /* 减小摘要的字体大小 */
         }
+
+        /* 保证链接的颜色一致 */
+        a:link, a:visited {
+            color: #007bff;  /* 保持链接颜色为蓝色 */
+            text-decoration: none; /* 去除下划线 */
+        }
+
+        a:hover {
+            text-decoration: none;  /* 鼠标悬停时不显示下划线 */
+        }
+
+        a:active {
+            color: #0056b3;  /* 点击时链接颜色 */
+        }
     </style>
 </head>
 <body>
@@ -177,14 +198,17 @@
             <h3>Total Results: {{ total_results }}</h3>
             <ul>
                 {% for paper in papers %}
-                <li class="paper-item">
-                    <h4>{{ paper.title }}</h4>
-                    <div class="year-category">
-                        <p><strong>Year:</strong> {{ paper.year }}</p>
-                        <p><strong>Category:</strong> {{ paper.category }}</p>
-                    </div>
-                    <p><strong>Abstract:</strong> <span class="abstract">{{ paper.abstract }}</span></p>
-                </li>
+                <!-- 将整个卡片链接包裹在 <a> 标签中 -->
+                <a href="{{ url_for('paper_routes.view_paper', paper_id=paper.id) }}">
+                    <li class="paper-item">
+                        <h4>{{ paper.title }}</h4>
+                        <div class="year-category">
+                            <p><strong>Year:</strong> {{ paper.year }}</p>
+                            <p><strong>Category:</strong> {{ paper.category }}</p>
+                        </div>
+                        <p><strong>Abstract:</strong> <span class="abstract">{{ paper.abstract }}</span></p>
+                    </li>
+                </a>
                 {% endfor %}
             </ul>
         </div>
