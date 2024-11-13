@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Person Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 100px auto; /* 居中显示 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 20px; /* 下方间距 */
+        }
+        p {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0;
+            color: #777;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0; /* 增加按钮之间的空间 */
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s; /* 过渡效果 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+        button:hover {
+            background-color: #0056b3; /* 悬停变色 */
+            transform: translateY(-2px); /* 按钮上升效果 */
+        }
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+            color: #D8000C;
+            background-color: #FFBABA; /* 警告信息背景色 */
+            border: 1px solid #D8000C;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .flashes li {
+            margin: 5px 0; /* 列表项之间的间距 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ username }}!</h1>
+        <p>Your role: {{ role }}</p>
+
+        <form action="{{ url_for('paper_routes.get_vip') }}" method="POST">
+            <button type="submit">Upgrade to VIP</button>
+        </form>
+
+        <form action="{{ url_for('paper_routes.logout') }}" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

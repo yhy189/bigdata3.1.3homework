@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session, flash
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from models import db, User, Citation, Paper
@@ -151,32 +151,71 @@ def view_paper(paper_id):
     )
 
 
-def get_similar_papers(paper):
-    """计算与该论文相似的论文（基于TF-IDF和余弦相似度）"""
-    # 获取所有论文的标题和摘要
-    papers = Paper.query.all()
-    corpus = [p.title + " " + p.abstract for p in papers]
+# def get_similar_papers(paper):
+#     """计算与该论文相似的论文（基于TF-IDF和余弦相似度）"""
+#     # 获取所有论文的标题和摘要
+#     papers = Paper.query.all()
+#     corpus = [p.title + " " + p.abstract for p in papers]
+#
+#     # 使用TF-IDF将文本转化为向量
+#     vectorizer = TfidfVectorizer(stop_words='english')
+#     tfidf_matrix = vectorizer.fit_transform(corpus)
+#
+#     # 获取当前论文的索引
+#     paper_index = papers.index(paper)
+#
+#     # 计算当前论文与其他论文之间的余弦相似度
+#     cosine_similarities = cosine_similarity(tfidf_matrix[paper_index], tfidf_matrix).flatten()
+#
+#     # 获取相似度最高的论文（除当前论文本身外）
+#     similar_papers = []
+#     for i in range(len(cosine_similarities)):
+#         if i != paper_index and cosine_similarities[i] > 0.1:  # 相似度阈值
+#             similar_paper = papers[i]
+#             similar_papers.append({
+#                 "id": similar_paper.id,
+#                 "title": similar_paper.title,
+#                 "year": similar_paper.year,
+#                 "category": similar_paper.category
+#             })
+#
+#     return similar_papers
 
-    # 使用TF-IDF将文本转化为向量
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(corpus)
 
-    # 获取当前论文的索引
-    paper_index = papers.index(paper)
+@paper_routes.route('/person', methods=['GET'])
+def person():
+    username = session.get('username')
+    role = session.get('role')
 
-    # 计算当前论文与其他论文之间的余弦相似度
-    cosine_similarities = cosine_similarity(tfidf_matrix[paper_index], tfidf_matrix).flatten()
+    if username is None:
+        flash("You need to be logged in to access this page.")
+        return redirect(url_for('auth_routes.login'))  # redirect to login if not logged in
 
-    # 获取相似度最高的论文（除当前论文本身外）
-    similar_papers = []
-    for i in range(len(cosine_similarities)):
-        if i != paper_index and cosine_similarities[i] > 0.1:  # 相似度阈值
-            similar_paper = papers[i]
-            similar_papers.append({
-                "id": similar_paper.id,
-                "title": similar_paper.title,
-                "year": similar_paper.year,
-                "category": similar_paper.category
-            })
+    return render_template('person.html', username=username, role=role)
 
-    return similar_papers
+@paper_routes.route('/getvip', methods=['POST'])
+def get_vip():
+    username = session.get('username')
+    if username:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.role = 'vip'
+            db.session.commit()
+
+            # 更新 session 中的 role
+            session['role'] = 'vip'
+
+            flash("Congratulations! You have been upgraded to VIP.")
+        else:
+            flash("User not found.")
+    else:
+        flash("You need to be logged in to upgrade to VIP.")
+
+    return redirect(url_for('paper_routes.person'))
+
+@paper_routes.route('/logout', methods=['POST'])
+def logout():
+    session.pop('username', None)
+    session.pop('role', None)
+    flash("Successfully logged out.")
+    return redirect(url_for('auth_routes.login'))

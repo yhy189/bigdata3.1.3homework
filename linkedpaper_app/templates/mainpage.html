@@ -39,24 +39,41 @@
             left: 0;
             width: 100%;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            align-items: center; /* 中间对齐 */
             z-index: 3;
         }
         nav img {
             height: 40px;
-            margin-right: 10px;
         }
         nav .logo-text {
             color: white;
-            font-size: 20px;
-            margin-left: 5px;
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        nav .left-section {
+            display: flex;
+            align-items: center;
+            margin-right: auto; /* 左侧区域挤压到左边 */
         }
         nav .welcome-text {
             color: white;
             font-size: 20px;
             font-weight: bold;
-            margin-right: 200px;
+            margin-right: 15px; /* 调整与按钮间的距离 */
+        }
+        .profile-button {
+            background-color: rgba(4, 133, 248, 0.82);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s; /* 增加过渡效果 */
+        }
+        .profile-button:hover {
+            background-color: #067af8;
         }
         .search-container {
             margin-top: 60px;
@@ -89,6 +106,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #067af8;
@@ -128,11 +146,12 @@
 
     <div class="overlay"></div>
     <nav>
-        <div>
+        <div class="left-section">
             <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
             <span class="logo-text">Research Papers</span>
+            <span class="welcome-text">Welcome, {{ username }}!</span>
+            <a href="{{ url_for('paper_routes.person') }}" class="profile-button">Personal Profile</a>
         </div>
-        <span class="welcome-text">Welcome, {{ username }}!</span>
     </nav>
 
     <div class="container">

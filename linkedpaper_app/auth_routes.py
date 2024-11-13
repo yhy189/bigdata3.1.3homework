@@ -1,9 +1,11 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session, flash
 from models import db, User
+from flask_bcrypt import Bcrypt
 
-auth_routes = Blueprint('auth_routes', __name__)  # 定义蓝图
+auth_routes = Blueprint('auth_routes', __name__)
+bcrypt = Bcrypt()  # Initialize bcrypt
 
-# 注册页面
+# Registration page
 @auth_routes.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -12,49 +14,43 @@ def register():
         password = data.get('password')
         email = data.get('email')
 
-        # 检查用户名和邮箱是否已经存在
+        # Check if username and email already exist
         if User.query.filter_by(username=username).first():
             return jsonify({"error": "Username already exists"}), 409
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "Email already registered"}), 409
 
-        # 创建并保存新用户
+        # Create and save new user
         user = User(username=username, email=email)
-        user.password = password  # 此处应对密码进行哈希处理
+        user.password = password  # This should hash the password automatically via the User model setter
         db.session.add(user)
         db.session.commit()
 
-        # 存储用户名和密码到 session
+        # Store username in session (do not store password)
         session['username'] = username
-        session['password'] = password  # 注意：不应直接存储密码
 
+        flash('Registration successful! You can now log in.', 'info')
         return redirect(url_for('auth_routes.login'))
 
     return render_template('register.html')
 
-# 登录页面
+# Login page
 @auth_routes.route('/login', methods=['GET', 'POST'])
 def login():
-    # 从 session 中获取用户名和密码
-    username = session.get('username', '')
-    password = session.get('password', '')
-
     if request.method == 'POST':
         data = request.form
         username = data.get('username')
         password = data.get('password')
+        session.pop('username', username)
 
-        # 验证用户和密码
+        # Verify user and password
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
-            # session['user_id'] = user.id  # 存储用户ID到session
-            # flash('登录成功！', 'info')
-
-            # 登录成功后清除 session 中的用户名和密码
-            session.pop('password', None)
-
+            session['username'] = username  # Store only the username
+            flash('Login successful!', 'info')
             return redirect(url_for('paper_routes.mainpage'))
 
         return jsonify({"error": "Invalid username or password"}), 401
 
-    return render_template('login.html', username=username, password=password)
+    # If the method is GET, render the login page without stored password
+    return render_template('login.html')
