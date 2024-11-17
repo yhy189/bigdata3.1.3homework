@@ -151,37 +151,6 @@ def view_paper(paper_id):
     )
 
 
-# def get_similar_papers(paper):
-#     """计算与该论文相似的论文（基于TF-IDF和余弦相似度）"""
-#     # 获取所有论文的标题和摘要
-#     papers = Paper.query.all()
-#     corpus = [p.title + " " + p.abstract for p in papers]
-#
-#     # 使用TF-IDF将文本转化为向量
-#     vectorizer = TfidfVectorizer(stop_words='english')
-#     tfidf_matrix = vectorizer.fit_transform(corpus)
-#
-#     # 获取当前论文的索引
-#     paper_index = papers.index(paper)
-#
-#     # 计算当前论文与其他论文之间的余弦相似度
-#     cosine_similarities = cosine_similarity(tfidf_matrix[paper_index], tfidf_matrix).flatten()
-#
-#     # 获取相似度最高的论文（除当前论文本身外）
-#     similar_papers = []
-#     for i in range(len(cosine_similarities)):
-#         if i != paper_index and cosine_similarities[i] > 0.1:  # 相似度阈值
-#             similar_paper = papers[i]
-#             similar_papers.append({
-#                 "id": similar_paper.id,
-#                 "title": similar_paper.title,
-#                 "year": similar_paper.year,
-#                 "category": similar_paper.category
-#             })
-#
-#     return similar_papers
-
-
 @paper_routes.route('/person', methods=['GET'])
 def person():
     username = session.get('username')
@@ -219,3 +188,102 @@ def logout():
     session.pop('role', None)
     flash("Successfully logged out.")
     return redirect(url_for('auth_routes.login'))
+
+@paper_routes.route('/favorite/add', methods=['POST'])
+def add_favorite_paper():
+    """添加收藏论文"""
+    username = session.get('username')
+    if not username:
+        flash("You need to be logged in to add favorite papers.")
+        return jsonify({"status": "error", "message": "User not logged in"}), 401
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"status": "error", "message": "User not found"}), 404
+
+    paper_id = request.json.get('paper_id')
+    if not paper_id:
+        return jsonify({"status": "error", "message": "Paper ID is required"}), 400
+
+    paper = Paper.query.get(paper_id)
+    if not paper:
+        return jsonify({"status": "error", "message": "Paper not found"}), 404
+
+    # 检查是否已经收藏过
+    if str(paper_id) in user.favorite_papers.split(','):
+        return jsonify({"status": "error", "message": "Paper already in favorites"}), 400
+
+    user.add_favorite_paper(paper_id)
+    db.session.commit()
+
+    return jsonify({"status": "success", "message": f"Paper {paper_id} added to favorites"}), 200
+@paper_routes.route('/favorite/remove', methods=['POST'])
+def remove_favorite_paper():
+    """取消收藏论文"""
+    username = session.get('username')
+    if not username:
+        flash("You need to be logged in to remove favorite papers.")
+        return jsonify({"status": "error", "message": "User not logged in"}), 401
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"status": "error", "message": "User not found"}), 404
+
+    paper_id = request.json.get('paper_id')
+    if not paper_id:
+        return jsonify({"status": "error", "message": "Paper ID is required"}), 400
+
+    # 检查是否在收藏中
+    if not user.favorite_papers or str(paper_id) not in user.favorite_papers.split(','):
+        return jsonify({"status": "error", "message": "Paper not in favorites"}), 404
+
+    user.remove_favorite_paper(paper_id)
+
+    # 清理空字符串和多余的逗号
+    if user.favorite_papers.endswith(','):
+        user.favorite_papers = user.favorite_papers.rstrip(',')
+
+    db.session.commit()
+
+    return jsonify({"status": "success", "message": f"Paper {paper_id} removed from favorites"}), 200
+@paper_routes.route('/favorite/list', methods=['GET'])
+def list_favorite_papers():
+    """获取收藏的论文列表"""
+    username = session.get('username')
+    if not username:
+        flash("You need to be logged in to view favorite papers.")
+        return jsonify({"status": "error", "message": "User not logged in"}), 401
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"status": "error", "message": "User not found"}), 404
+
+    favorite_ids = user.get_favorite_papers()
+
+    # 如果没有收藏的论文
+    if not favorite_ids:
+        return jsonify({"status": "success", "favorites": []}), 200
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    papers = Paper.query.filter(Paper.id.in_(favorite_ids)).paginate(page, per_page, False)
+
+    results = [
+        {
+            "id": paper.id,
+            "title": paper.title,
+            "abstract": paper.abstract,
+            "category": paper.category,
+            "year": paper.year,
+            "frequency": paper.frequency,
+        }
+        for paper in papers.items
+    ]
+
+    return jsonify({
+        "status": "success",
+        "favorites": results,
+        "total": papers.total,
+        "pages": papers.pages,
+        "current_page": papers.page
+    }), 200
