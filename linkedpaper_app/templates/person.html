@@ -1,360 +1,159 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Person Information</title>#}
-{#    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">#}
-{#    <style>#}
-{#        body {#}
-{#            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;#}
-{#            background-size: cover;#}
-{#            font-family: Arial, sans-serif;#}
-{#            margin: 0;#}
-{#            color: #333;#}
-{#        }#}
-{#        .container {#}
-{#            background-color: rgba(255, 255, 255, 0.95);#}
-{#            border-radius: 10px;#}
-{#            padding: 30px;#}
-{#            max-width: 600px;#}
-{#            margin: 100px auto; /* 居中显示 */#}
-{#            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);#}
-{#        }#}
-{#        h1 {#}
-{#            text-align: center;#}
-{#            color: #444;#}
-{#            margin-bottom: 20px; /* 下方间距 */#}
-{#        }#}
-{#        p {#}
-{#            font-size: 20px;#}
-{#            text-align: center;#}
-{#            margin: 15px 0;#}
-{#            color: #777;#}
-{#        }#}
-{#        button {#}
-{#            display: block;#}
-{#            width: 100%;#}
-{#            padding: 12px;#}
-{#            margin: 12px 0; /* 增加按钮之间的空间 */#}
-{#            background-color: #007BFF;#}
-{#            color: white;#}
-{#            border: none;#}
-{#            border-radius: 6px;#}
-{#            cursor: pointer;#}
-{#            font-size: 18px;#}
-{#            font-weight: bold;#}
-{#            transition: background-color 0.3s, transform 0.3s; /* 过渡效果 */#}
-{#            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);#}
-{#        }#}
-{#        button:hover {#}
-{#            background-color: #0056b3; /* 悬停变色 */#}
-{#            transform: translateY(-2px); /* 按钮上升效果 */#}
-{#        }#}
-{#        .flashes {#}
-{#            list-style-type: none;#}
-{#            padding: 0;#}
-{#            margin: 20px 0;#}
-{#            color: #D8000C;#}
-{#            background-color: #FFBABA; /* 警告信息背景色 */#}
-{#            border: 1px solid #D8000C;#}
-{#            border-radius: 6px;#}
-{#            padding: 15px;#}
-{#        }#}
-{#        .flashes li {#}
-{#            margin: 5px 0; /* 列表项之间的间距 */#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{#    <div class="container">#}
-{#        <h1>Welcome, {{ username }}!</h1>#}
-{#        <p>Your role: {{ role }}</p>#}
-{##}
-{#        <form action="{{ url_for('paper_routes.get_vip') }}" method="POST">#}
-{#            <button type="submit">Upgrade to VIP</button>#}
-{#        </form>#}
-{##}
-{#        <form action="{{ url_for('paper_routes.logout') }}" method="POST">#}
-{#            <button type="submit">Logout</button>#}
-{#        </form>#}
-{##}
-{#        {% with messages = get_flashed_messages() %}#}
-{#            {% if messages %}#}
-{#                <ul class="flashes">#}
-{#                    {% for message in messages %}#}
-{#                        <li>{{ message }}</li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
-{#            {% endif %}#}
-{#        {% endwith %}#}
-{#    </div>#}
-{#</body>#}
-{#</html>#}
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Person Information</title>#}
-{#    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">#}
-{#    <style>#}
-{#        body {#}
-{#            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;#}
-{#            background-size: cover;#}
-{#            font-family: Arial, sans-serif;#}
-{#            margin: 0;#}
-{#            color: #333;#}
-{#        }#}
-{#        .container {#}
-{#            background-color: rgba(255, 255, 255, 0.95);#}
-{#            border-radius: 10px;#}
-{#            padding: 30px;#}
-{#            max-width: 600px;#}
-{#            margin: 100px auto;#}
-{#            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);#}
-{#        }#}
-{#        h1 {#}
-{#            text-align: center;#}
-{#            color: #444;#}
-{#            margin-bottom: 20px;#}
-{#        }#}
-{#        p {#}
-{#            font-size: 20px;#}
-{#            text-align: center;#}
-{#            margin: 15px 0;#}
-{#            color: #777;#}
-{#        }#}
-{#        button {#}
-{#            display: block;#}
-{#            width: 100%;#}
-{#            padding: 12px;#}
-{#            margin: 12px 0;#}
-{#            background-color: #007BFF;#}
-{#            color: white;#}
-{#            border: none;#}
-{#            border-radius: 6px;#}
-{#            cursor: pointer;#}
-{#            font-size: 18px;#}
-{#            font-weight: bold;#}
-{#            transition: background-color 0.3s, transform 0.3s;#}
-{#            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);#}
-{#        }#}
-{#        button:hover {#}
-{#            background-color: #0056b3;#}
-{#            transform: translateY(-2px);#}
-{#        }#}
-{#        .flashes {#}
-{#            list-style-type: none;#}
-{#            padding: 0;#}
-{#            margin: 20px 0;#}
-{#            color: #D8000C;#}
-{#            background-color: #FFBABA;#}
-{#            border: 1px solid #D8000C;#}
-{#            border-radius: 6px;#}
-{#            padding: 15px;#}
-{#        }#}
-{#        .flashes li {#}
-{#            margin: 5px 0;#}
-{#        }#}
-{#        .favorites {#}
-{#            margin-top: 30px;#}
-{#        }#}
-{#        .favorites h2 {#}
-{#            text-align: center;#}
-{#            color: #555;#}
-{#            margin-bottom: 20px;#}
-{#        }#}
-{#        .favorites-list {#}
-{#            list-style: none;#}
-{#            padding: 0;#}
-{#            margin: 0;#}
-{#        }#}
-{#        .favorites-item {#}
-{#            padding: 10px 15px;#}
-{#            margin: 10px 0;#}
-{#            background-color: #f9f9f9;#}
-{#            border: 1px solid #ddd;#}
-{#            border-radius: 6px;#}
-{#            display: flex;#}
-{#            justify-content: space-between;#}
-{#            align-items: center;#}
-{#        }#}
-{#        .favorites-item button {#}
-{#            width: auto;#}
-{#            padding: 8px 15px;#}
-{#            background-color: #dc3545;#}
-{#            font-size: 14px;#}
-{#        }#}
-{#        .favorites-item button:hover {#}
-{#            background-color: #c82333;#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{#    <div class="container">#}
-{#        <h1>Welcome, {{ username }}!</h1>#}
-{#        <p>Your role: {{ role }}</p>#}
-{##}
-{#        <form action="{{ url_for('paper_routes.get_vip') }}" method="POST">#}
-{#            <button type="submit">Upgrade to VIP</button>#}
-{#        </form>#}
-{##}
-{#        <form action="{{ url_for('paper_routes.logout') }}" method="POST">#}
-{#            <button type="submit">Logout</button>#}
-{#        </form>#}
-{##}
-{#        {% with messages = get_flashed_messages() %}#}
-{#            {% if messages %}#}
-{#                <ul class="flashes">#}
-{#                    {% for message in messages %}#}
-{#                        <li>{{ message }}</li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
-{#            {% endif %}#}
-{#        {% endwith %}#}
-{##}
-{#        <div class="favorites">#}
-{#            <h2>Favorite Papers</h2>#}
-{#            {% if favorite_papers %}#}
-{#                <ul class="favorites-list">#}
-{#                    {% for paper in favorite_papers %}#}
-{#                        <li class="favorites-item">#}
-{#                            <span>{{ paper.title }}</span>#}
-{#                            <form action="{{ url_for('paper_routes.unfavorite_paper', paper_id=paper.id) }}" method="POST">#}
-{#                                <button type="submit">Unfavorite</button>#}
-{#                            </form>#}
-{#                        </li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
-{#            {% else %}#}
-{#                <p style="text-align: center; color: #999;">You have no favorite papers yet.</p>#}
-{#            {% endif %}#}
-{#        </div>#}
-{#    </div>#}
-{#</body>#}
-{#</html>#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Person Information</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
+        /* 全局设置 */
         body {
             background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
             background-size: cover;
-            font-family: 'Georgia', serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
+            padding: 0;
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
+
+        /* 容器样式 */
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
             padding: 40px;
-            max-width: 800px;
-            margin: 100px auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            font-size: 18px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        h1 {
+
+        /* 头部标题 */
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
         }
-        p {
-            text-align: center;
-            margin: 15px 0;
-            color: #666;
-        }
+
+        /* 按钮样式 */
         button {
             display: block;
             width: 100%;
             padding: 14px;
-            margin: 20px 0;
-            background-color: #005A89;
-            color: white;
+            margin: 10px 0;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
+
+        /* 按钮的不同风格 */
+        .btn.primary {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .btn.secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn.danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
         button:hover {
-            background-color: #004a70;
+            transform: translateY(-2px);
         }
+
+        button:active {
+            transform: translateY(2px);
+        }
+
+        /* 警告信息 */
         .flashes {
-            list-style-type: none;
-            padding: 0;
             margin: 20px 0;
-            color: #D8000C;
             background-color: #FFBABA;
-            border: 1px solid #D8000C;
-            border-radius: 6px;
+            border-left: 5px solid #D8000C;
             padding: 15px;
+            border-radius: 6px;
         }
-        .flashes li {
-            margin: 5px 0;
+
+        .flash-message {
+            color: #D8000C;
+            font-size: 16px;
         }
-        .favorites {
-            margin-top: 30px;
-        }
+
+        /* 收藏列表 */
         .favorites h2 {
             text-align: center;
             color: #444;
             margin-bottom: 20px;
         }
+
         .favorites-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .favorites-item {
-            padding: 12px 15px;
-            margin: 12px 0;
-            background-color: #f4f4f4;
+            padding: 12px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
             border: 1px solid #ddd;
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .favorites-item button {
-            width: auto;
-            padding: 8px 15px;
-            background-color: #dc3545;
-            font-size: 14px;
-            color: white;
+
+        .favorites-item span {
+            color: #333;
         }
-        .favorites-item button:hover {
-            background-color: #c82333;
+
+        .no-favorites {
+            text-align: center;
+            color: #999;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, {{ username }}!</h1>
-        <p>Your role: {{ role }}</p>
+        <header>
+            <h1>Welcome, {{ username }}!</h1>
+            <p>Your role: {{ role }}</p>
+        </header>
 
-        <form action="{{ url_for('paper_routes.get_vip') }}" method="POST">
-            <button type="submit">Upgrade to VIP</button>
-        </form>
-
-        <form action="{{ url_for('paper_routes.logout') }}" method="POST">
-            <button type="submit">Logout</button>
-        </form>
+        <section class="actions">
+            <form action="{{ url_for('paper_routes.get_vip') }}" method="POST">
+                <button type="submit" class="btn primary">Upgrade to VIP</button>
+            </form>
+            <form action="{{ url_for('paper_routes.logout') }}" method="POST">
+                <button type="submit" class="btn secondary">Logout</button>
+            </form>
+        </section>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <ul class="flashes">
+                <div class="flashes">
                     {% for message in messages %}
-                        <li>{{ message }}</li>
+                        <div class="flash-message">{{ message }}</div>
                     {% endfor %}
-                </ul>
+                </div>
             {% endif %}
         {% endwith %}
 
-        <div class="favorites">
+        <section class="favorites">
             <h2>Favorite Papers</h2>
             {% if favorite_papers %}
                 <ul class="favorites-list">
@@ -362,15 +161,15 @@
                         <li class="favorites-item">
                             <span>{{ paper.title }} by {{ paper.author }}</span>
                             <form action="{{ url_for('paper_routes.unfavorite_paper', paper_id=paper.id) }}" method="POST">
-                                <button type="submit">Unfavorite</button>
+                                <button type="submit" class="btn danger">Unfavorite</button>
                             </form>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p style="text-align: center; color: #999;">You have no favorite papers yet.</p>
+                <p class="no-favorites">You have no favorite papers yet.</p>
             {% endif %}
-        </div>
+        </section>
     </div>
 </body>
 </html>

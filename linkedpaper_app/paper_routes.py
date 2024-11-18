@@ -87,6 +87,26 @@ def search_papers():
     )
 
 
+# @paper_routes.route('/mainpage', methods=['GET'])
+# def mainpage():
+#     username = session.get('username')
+#     role = session.get('role')
+#
+#     available_categories = ['cs.AI', 'cs.AR', 'cs.CC', 'cs.CE', 'cs.CG', 'cs.CL', 'cs.CR', 'cs.CV', 'cs.CY',
+#                             'cs.DB', 'cs.DC', 'cs.DL', 'cs.DM', 'cs.DS', 'cs.ET', 'cs.FL', 'cs.GL', 'cs.GR',
+#                             'cs.GT', 'cs.HC', 'cs.IR', 'cs.IT', 'cs.LG', 'cs.LO', 'cs.MA', 'cs.MM', 'cs.MS',
+#                             'cs.NA', 'cs.NE', 'cs.NI', 'cs.OH', 'cs.OS', 'cs.PF', 'cs.PL', 'cs.RO', 'cs.SC',
+#                             'cs.SD', 'cs.SE', 'cs.SI', 'cs.SY']
+#     session['last_page'] = url_for('paper_routes.mainpage')
+#     recommended_papers = Paper.query.order_by(Paper.frequency.desc()).limit(5).all()
+#
+#     return render_template('mainpage.html',
+#                            username=username,
+#                            role=role,
+#                            available_categories=available_categories,
+#                            #recommended_papers=recommended_papers
+#                            )
+
 @paper_routes.route('/mainpage', methods=['GET'])
 def mainpage():
     username = session.get('username')
@@ -95,23 +115,19 @@ def mainpage():
     available_categories = ['cs.AI', 'cs.AR', 'cs.CC', 'cs.CE', 'cs.CG', 'cs.CL', 'cs.CR', 'cs.CV', 'cs.CY',
                             'cs.DB', 'cs.DC', 'cs.DL', 'cs.DM', 'cs.DS', 'cs.ET', 'cs.FL', 'cs.GL', 'cs.GR',
                             'cs.GT', 'cs.HC', 'cs.IR', 'cs.IT', 'cs.LG', 'cs.LO', 'cs.MA', 'cs.MM', 'cs.MS',
-                            'cs.NA', 'cs.NE', 'cs.NI', 'cs.OH', 'cs.OS', 'cs.PF', 'cs.PL', 'cs.RO', 'cs.SC',
-                            'cs.SD', 'cs.SE', 'cs.SI', 'cs.SY']
-    session['last_page'] = url_for('paper_routes.mainpage')
-    #recommended_papers = Paper.query.order_by(Paper.frequency.desc()).limit(5).all()
+                            'cs.NA', 'cs.NE', 'cs.NI', 'cs.OH', 'cs.OS', 'cs.PF', 'cs.PM', 'cs.PP', 'cs.PL',
+                            'cs.RO', 'cs.SC', 'cs.SD', 'cs.SE', 'cs.SI', 'cs.SY']
 
-    return render_template('mainpage.html',
-                           username=username,
-                           role=role,
-                           available_categories=available_categories,
-                           #recommended_papers=recommended_papers
-                           )
+    # 获取 Top 10 论文
+    top_papers = Paper.query.order_by(Paper.frequency.desc()).limit(5).all()
 
+    return render_template('mainpage.html', username=username, available_categories=available_categories,
+                           top_papers=top_papers)
 
 @paper_routes.route('/paper/<int:paper_id>', methods=['GET'])
 def view_paper(paper_id):
     paper = Paper.query.get_or_404(paper_id)
-
+    paper.increment_frequency()
     # 获取该论文引用的其他论文
     citations = Citation.query.filter(Citation.citing_paper_id == paper.id).all()
     cited_papers = []

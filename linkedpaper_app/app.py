@@ -22,7 +22,7 @@ app.register_blueprint(paper_routes, url_prefix='/paper')
 # 数据库初始化
 with app.app_context():
     db.create_all()
-    import_data()
+    # import_data()
 
 if __name__ == '__main__':
     app.run(debug=True)

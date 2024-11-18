@@ -27,8 +27,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            justify-content: flex-start;
+            padding-top: 100px;
             text-align: center;
         }
         nav {
@@ -39,7 +39,7 @@
             left: 0;
             width: 100%;
             display: flex;
-            align-items: center; /* 中间对齐 */
+            align-items: center;
             z-index: 3;
         }
         nav img {
@@ -53,13 +53,13 @@
         nav .left-section {
             display: flex;
             align-items: center;
-            margin-right: auto; /* 左侧区域挤压到左边 */
+            margin-right: auto;
         }
         nav .welcome-text {
             color: white;
             font-size: 20px;
             font-weight: bold;
-            margin-right: 15px; /* 调整与按钮间的距离 */
+            margin-right: 15px;
         }
         .profile-button {
             background-color: rgba(4, 133, 248, 0.82);
@@ -70,17 +70,17 @@
             cursor: pointer;
             font-size: 16px;
             text-decoration: none;
-            transition: background-color 0.3s; /* 增加过渡效果 */
+            transition: background-color 0.3s;
         }
         .profile-button:hover {
             background-color: #067af8;
         }
         .search-container {
-            margin-top: 60px;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
+            margin-top: 30px;
         }
         .search-box {
             display: flex;
@@ -116,8 +116,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 600px;
+            width: 90%; /* 增加宽度 */
+            max-width: 800px; /* 增加最大宽度 */
             text-align: left;
             margin-top: 30px;
         }
@@ -140,10 +140,41 @@
         .recommended-section li:hover {
             background-color: rgba(236, 236, 236, 0.62);
         }
+        .recommended-section li span.title {
+            font-weight: bold;
+            color: #067af8; /* 蓝色 */
+            font-size: 16px; /* 字体变小 */
+        }
+        .recommended-section li span.year {
+            color: gray; /* 灰色 */
+            font-size: 14px; /* 小字体 */
+        }
+        .recommended-section li span.category {
+            font-style: italic; /* 斜体 */
+            color: #005d8d; /* 深蓝色 */
+            font-size: 16px; /* 中等 */
+        }
+        .title-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .title-container h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #067af8;
+        }
+        .paper-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+        }
+        .paper-info span {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
-
     <div class="overlay"></div>
     <nav>
         <div class="left-section">
@@ -155,7 +186,12 @@
     </nav>
 
     <div class="container">
-        <h1>Find Your Research Papers</h1>
+        <!-- Title Section -->
+        <div class="title-container">
+            <h1>Find Your Research Papers</h1>
+        </div>
+
+        <!-- Search Section -->
         <div class="search-container">
             <div class="search-box">
                 <label for="title">Title:</label>
@@ -181,13 +217,18 @@
             <button onclick="searchPapers()">Search</button>
         </div>
 
+        <!-- Top 5 Papers Section (now limited to 5) -->
         <div class="recommended-section">
-            <h2>Recommended Papers</h2>
-            <ul>
-                {% for paper in recommended_papers %}
-                    <li onclick="selectPaper('{{ paper.title }}')">
-                        <span>{{ paper.title }}</span>
-                        <span> {{ paper.category }} ({{ paper.year }})</span>
+            <h2>Top 5 Papers</h2>
+            <ul id="top-papers-list">
+                {% for paper in top_papers[:5] %} <!-- 只显示前五个 -->
+                    <li onclick="viewPaper('{{ paper.id }}')">
+                        <div class="paper-info">
+                            <span class="title">{{ paper.title }}</span>
+                            <span class="category">{{ paper.category }}</span>
+                            <span class="year">({{ paper.year }})</span>
+                        </div>
+                        <div>Views: {{ paper.frequency }}</div>
                     </li>
                 {% endfor %}
             </ul>
@@ -195,6 +236,7 @@
     </div>
 
     <script>
+        // Search function
         function searchPapers() {
             const title = document.getElementById('title').value;
             const abstract = document.getElementById('abstract').value;
@@ -204,10 +246,10 @@
             window.location.href = `/paper/search?${params}`;
         }
 
-        function selectPaper(title) {
-            alert(`Selected paper: ${title}`);
+        function viewPaper(paperId) {
+            // Redirect to the detailed page for the selected paper
+            window.location.href = `/paper/paper/${paperId}`;
         }
     </script>
-
 </body>
 </html>
