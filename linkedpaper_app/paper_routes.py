@@ -1,3 +1,4 @@
+from Demos.win32ts_logoff_disconnected import username
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session, flash
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -132,7 +133,8 @@ def view_paper(paper_id):
     citations = Citation.query.filter(Citation.citing_paper_id == paper.id).all()
     cited_papers = []
     citation_ids = set()  # 去重引用的论文
-
+    role = session.get('role', 'common')
+    username=session.get('username')
     for citation in citations:
         cited_paper = Paper.query.get(citation.cited_paper_id)
         if cited_paper and cited_paper.id not in citation_ids:
@@ -158,6 +160,8 @@ def view_paper(paper_id):
 
     return render_template(
         'paper_detail.html',
+        username=username,
+        role=role,
         paper=paper,
         cited_papers=cited_papers,
         category_papers=category_papers,
