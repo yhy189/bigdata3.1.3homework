@@ -56,6 +56,9 @@ class User(db.Model):
         """获取用户收藏的论文 ID 列表"""
         return list(map(int, self.favorite_papers.split(','))) if self.favorite_papers else []
 
+    def get_role(self):
+        """获取用户角色"""
+        return self.role
     def __repr__(self):
         return f'<User {self.username}>'
 

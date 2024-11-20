@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Main Page{% endblock %}</title>
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='img1.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px; /* Adjusted padding */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 3;
+        }
+        nav img {
+            height: 30px; /* Adjusted logo size */
+            width: auto;
+        }
+        nav .logo-text {
+            color: white;
+            font-size: 18px; /* Adjusted font size for logo */
+            margin-left: 10px;
+        }
+        nav .left-section {
+            display: flex;
+            align-items: center;
+            margin-right: auto;
+        }
+        nav .welcome-text {
+            color: white;
+            font-size: 16px; /* Adjusted font size for welcome text */
+            font-weight: bold;
+            margin-right: 15px; /* Increased space between welcome text and icons */
+        }
+        .icons {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            margin-right: 40px; /* Adjusted to slightly reduce the distance from the right edge */
+        }
+        .icons img {
+            height: 20px; /* Ensures both icons are the same size */
+            margin-left: 10px; /* Adjusted spacing between the icons */
+        }
+        .search-button {
+            background-color: rgba(4, 133, 248, 0.82);
+            color: white;
+            padding: 7px 12px; /* Adjusted button size */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px; /* Adjusted font size */
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        .search-button:hover {
+            background-color: #067af8;
+        }
+        .search-button i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="left-section">
+            <!-- Display different logos based on user role -->
+            <img src="{{ url_for('static', filename= 'viplogo.jpg' if role == 'vip' else 'logo.jpg') }}" alt="Logo">
+            <span class="logo-text">Research Papers</span>
+            <span class="welcome-text">Welcome, {{ username }}!</span>
+        </div>
+
+        <div class="icons">
+            <!-- Profile icon -->
+            <a href="{{ url_for('paper_routes.person') }}">
+                <img src="{{ url_for('static', filename='personprofile.png') }}" alt="Profile">
+            </a>
+            <!-- Search icon -->
+            <a href="javascript:void(0)" onclick="mainpage()">
+                <img src="{{ url_for('static', filename='search.png') }}" alt="Search">
+            </a>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %} <!-- Page-specific content will be inserted here -->
+
+    <script>
+        function mainpage() {
+            window.location.href = `/paper/mainpage`;
+        }
+    </script>
+</body>
+</html>

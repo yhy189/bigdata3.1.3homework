@@ -41,16 +41,19 @@ def login():
         data = request.form
         username = data.get('username')
         password = data.get('password')
-        session.pop('username', username)
 
-        # Verify user and password
+        # 查找用户
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
-            session['username'] = username  # Store only the username
+            # 将用户信息存入 session
+            session['username'] = username
+            session['role'] = user.role  # 存储角色信息
+
             flash('Login successful!', 'info')
             return redirect(url_for('paper_routes.mainpage'))
 
+        # 用户名或密码无效
         return jsonify({"error": "Invalid username or password"}), 401
 
-    # If the method is GET, render the login page without stored password
+    # 如果是 GET 请求，返回登录页面
     return render_template('login.html')

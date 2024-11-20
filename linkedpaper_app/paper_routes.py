@@ -110,7 +110,7 @@ def search_papers():
 @paper_routes.route('/mainpage', methods=['GET'])
 def mainpage():
     username = session.get('username')
-    role = session.get('role')
+    role = session.get('role', 'common')
 
     available_categories = ['cs.AI', 'cs.AR', 'cs.CC', 'cs.CE', 'cs.CG', 'cs.CL', 'cs.CR', 'cs.CV', 'cs.CY',
                             'cs.DB', 'cs.DC', 'cs.DL', 'cs.DM', 'cs.DS', 'cs.ET', 'cs.FL', 'cs.GL', 'cs.GR',
@@ -122,7 +122,7 @@ def mainpage():
     top_papers = Paper.query.order_by(Paper.frequency.desc()).limit(5).all()
 
     return render_template('mainpage.html', username=username, available_categories=available_categories,
-                           top_papers=top_papers)
+                           top_papers=top_papers,role=role)
 
 @paper_routes.route('/paper/<int:paper_id>', methods=['GET'])
 def view_paper(paper_id):

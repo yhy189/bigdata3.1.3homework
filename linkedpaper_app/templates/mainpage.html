@@ -175,16 +175,6 @@
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
-    <nav>
-        <div class="left-section">
-            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
-            <span class="logo-text">Research Papers</span>
-            <span class="welcome-text">Welcome, {{ username }}!</span>
-            <a href="{{ url_for('paper_routes.person') }}" class="profile-button">Personal Profile</a>
-        </div>
-    </nav>
-
     <div class="container">
         <!-- Title Section -->
         <div class="title-container">
@@ -217,7 +207,7 @@
             <button onclick="searchPapers()">Search</button>
         </div>
 
-        <!-- Top 5 Papers Section (now limited to 5) -->
+        <!-- Top 5 Papers Section -->
         <div class="recommended-section">
             <h2>Top 5 Papers</h2>
             <ul id="top-papers-list">
@@ -234,9 +224,8 @@
             </ul>
         </div>
     </div>
-
     <script>
-        // Search function
+        // Search function to handle search parameters
         function searchPapers() {
             const title = document.getElementById('title').value;
             const abstract = document.getElementById('abstract').value;
@@ -246,10 +235,11 @@
             window.location.href = `/paper/search?${params}`;
         }
 
+        // Function to view details of selected paper
         function viewPaper(paperId) {
-            // Redirect to the detailed page for the selected paper
             window.location.href = `/paper/paper/${paperId}`;
         }
     </script>
 </body>
 </html>
+ {% extends "base.html" %}
